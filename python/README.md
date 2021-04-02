@@ -1,3 +1,8 @@
+Supplementary Material for Pilot Contamination Attack Detection in Massive
+MIMO Using Generative Adversarial Networks [Python code]
+===
+
+
 ```python
 # Import libraries and layers
 import os
