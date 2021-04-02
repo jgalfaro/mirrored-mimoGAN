@@ -46,8 +46,8 @@ the received signal / channel matrix. The training process is done in Python.
 After training, the trained networks and their weighs are saved to be evaluated
 in test phase with both normal data and abnormal database each with size of 1000.
 
-The Matlab code is available <a href="https://github.com/jgalfaro/mirrored-mimoGAN/matlab/">here</a>.
+The Matlab code is available <a href="https://github.com/jgalfaro/mirrored-mimoGAN/tree/main/matlab">here</a>.
 
 ## Python Simulations
 
-The Python code is available <a href="https://github.com/jgalfaro/mirrored-mimoGAN/python/">here</a>.
+The Python code is available <a href="https://github.com/jgalfaro/mirrored-mimoGAN/tree/main/python">here</a>.
