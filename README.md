@@ -44,7 +44,8 @@ and *DropOut* operations. The last layer is composed of *Flatten* and
 function, which returns a binary output (e.g., *true* or *false*).
 
 
-![png](./figs/GANfigure.png)
+<img src="./figs/GANfigure.png" width="65%"  />
+
 #### Figure 1. Architecture of our proposed GAN.
 
 The generator is designed as an estimator, with encoding and decoding
