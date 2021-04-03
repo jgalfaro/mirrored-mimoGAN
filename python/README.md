@@ -25,22 +25,13 @@ from keras.initializers import RandomNormal
 ```python
 os.environ["KERAS_BACKEND"] = "tensorflow"
 np.random.seed(10)
-from google.colab import drive 
-drive.mount('/content/drive')
-#TrainData=scipy.io.loadmat('/content/drive/My Drive/TrainData.mat');
-Y_noisy=scipy.io.loadmat('/content/drive/My Drive/In_Data.mat');
+Y_noisy=scipy.io.loadmat('In_Data.mat');
 Y_noisy = np.array(list(Y_noisy.values())[3])
-Channels=scipy.io.loadmat('/content/drive/My Drive/Out_Data.mat');
+Channels=scipy.io.loadmat('Out_Data.mat');
 Channels = np.array(list(Channels.values())[3])
 print(Y_noisy.shape)
 print(Channels.shape)
 ```
-
-    Mounted at /content/drive
-    (4000, 64, 8, 2)
-    (4000, 64, 8, 2)
-
-
 
 ```python
 # design discriminator
@@ -51,13 +42,13 @@ Input_shape=(64,8,2)
 def define_discriminator(Input_shape):
     init = RandomNormal(mean=0, stddev=0.02)
     model=Sequential()
-    
+
     model.add(Conv2D(64,kernel_size=4,strides=2,input_shape=Input_shape,
                              padding='same',kernel_initializer=init))
     model.add(BatchNormalization())
     model.add(LeakyReLU(0.2))
     model.add(Dropout(rate = 0.4))
-    
+
     model.add(Conv2D(128,kernel_size=4,strides=2,padding='same',kernel_initializer=init))
     model.add(BatchNormalization())
     model.add(LeakyReLU(0.2))
@@ -67,10 +58,10 @@ def define_discriminator(Input_shape):
     model.add(BatchNormalization())
     model.add(LeakyReLU(0.2))
     model.add(Dropout(rate = 0.4))
-    
+
     model.add(Flatten())
     model.add(Dense(1,activation='linear'))
-    
+
     model.compile(loss='mean_squared_error',optimizer=Adam(lr=0.0002, beta_1=0.5),
                           metrics=['accuracy'])
     return model
@@ -80,35 +71,35 @@ Figure1.summary()
 
     Model: "sequential"
     _________________________________________________________________
-    Layer (type)                 Output Shape              Param #   
+    Layer (type)                 Output Shape              Param #
     =================================================================
-    conv2d (Conv2D)              (None, 32, 4, 64)         2112      
+    conv2d (Conv2D)              (None, 32, 4, 64)         2112
     _________________________________________________________________
-    batch_normalization (BatchNo (None, 32, 4, 64)         256       
+    batch_normalization (BatchNo (None, 32, 4, 64)         256
     _________________________________________________________________
-    leaky_re_lu (LeakyReLU)      (None, 32, 4, 64)         0         
+    leaky_re_lu (LeakyReLU)      (None, 32, 4, 64)         0
     _________________________________________________________________
-    dropout (Dropout)            (None, 32, 4, 64)         0         
+    dropout (Dropout)            (None, 32, 4, 64)         0
     _________________________________________________________________
-    conv2d_1 (Conv2D)            (None, 16, 2, 128)        131200    
+    conv2d_1 (Conv2D)            (None, 16, 2, 128)        131200
     _________________________________________________________________
-    batch_normalization_1 (Batch (None, 16, 2, 128)        512       
+    batch_normalization_1 (Batch (None, 16, 2, 128)        512
     _________________________________________________________________
-    leaky_re_lu_1 (LeakyReLU)    (None, 16, 2, 128)        0         
+    leaky_re_lu_1 (LeakyReLU)    (None, 16, 2, 128)        0
     _________________________________________________________________
-    dropout_1 (Dropout)          (None, 16, 2, 128)        0         
+    dropout_1 (Dropout)          (None, 16, 2, 128)        0
     _________________________________________________________________
-    conv2d_2 (Conv2D)            (None, 8, 1, 256)         524544    
+    conv2d_2 (Conv2D)            (None, 8, 1, 256)         524544
     _________________________________________________________________
-    batch_normalization_2 (Batch (None, 8, 1, 256)         1024      
+    batch_normalization_2 (Batch (None, 8, 1, 256)         1024
     _________________________________________________________________
-    leaky_re_lu_2 (LeakyReLU)    (None, 8, 1, 256)         0         
+    leaky_re_lu_2 (LeakyReLU)    (None, 8, 1, 256)         0
     _________________________________________________________________
-    dropout_2 (Dropout)          (None, 8, 1, 256)         0         
+    dropout_2 (Dropout)          (None, 8, 1, 256)         0
     _________________________________________________________________
-    flatten (Flatten)            (None, 2048)              0         
+    flatten (Flatten)            (None, 2048)              0
     _________________________________________________________________
-    dense (Dense)                (None, 1)                 2049      
+    dense (Dense)                (None, 1)                 2049
     =================================================================
     Total params: 661,697
     Trainable params: 660,801
@@ -129,11 +120,11 @@ def define_generator(Input):
     model.add(Conv2D(128,kernel_size=4,strides=2,input_shape=Input_shape,padding='same',kernel_initializer=init))
     model.add(ReLU(0.2))
     model.add(BatchNormalization())
-    
+
     model.add(Conv2D(128,kernel_size=4,strides=1,input_shape=Input_shape,padding='same',kernel_initializer=init))
     model.add(ReLU(0.2))
     model.add(BatchNormalization())
-    
+
     model.add(Conv2D(64,kernel_size=4,strides=2,padding='same',kernel_initializer=init))
     model.add(ReLU(0.2))
     model.add(BatchNormalization())
@@ -141,76 +132,76 @@ def define_generator(Input):
     model.add(Conv2D(32,kernel_size=4,strides=2,padding='same',kernel_initializer=init))
     model.add(ReLU(0.2))
     model.add(BatchNormalization())
-    
-    
+
+
     # Decoder
     model.add(Conv2DTranspose(32,kernel_size=4,strides=2,padding='same',kernel_initializer=init))
     model.add(ReLU(0.2))
     model.add(BatchNormalization())
-    
+
     model.add(Conv2DTranspose(64,kernel_size=4,strides=1,padding='same',kernel_initializer=init))
     model.add(ReLU(0.2))
     model.add(BatchNormalization())
-    
+
     model.add(Conv2DTranspose(128,kernel_size=4,strides=2,padding='same',kernel_initializer=init))
     model.add(BatchNormalization())
     model.add(ReLU(0.2))
-    
+
     model.add(Conv2DTranspose(2,kernel_size=4,strides=2,activation='tanh',padding='same',kernel_initializer=init))
     #generator.compile(loss='binary_crossentropy',optimizer=Adam(lr=0.0002,beta_1=0.5))
-    
+
     return model
 Figure2=define_generator(Input)
-Figure2.summary()    
+Figure2.summary()
 ```
 
     Model: "sequential_1"
     _________________________________________________________________
-    Layer (type)                 Output Shape              Param #   
+    Layer (type)                 Output Shape              Param #
     =================================================================
-    conv2d_3 (Conv2D)            (None, 32, 4, 128)        4224      
+    conv2d_3 (Conv2D)            (None, 32, 4, 128)        4224
     _________________________________________________________________
-    re_lu (ReLU)                 (None, 32, 4, 128)        0         
+    re_lu (ReLU)                 (None, 32, 4, 128)        0
     _________________________________________________________________
-    batch_normalization_3 (Batch (None, 32, 4, 128)        512       
+    batch_normalization_3 (Batch (None, 32, 4, 128)        512
     _________________________________________________________________
-    conv2d_4 (Conv2D)            (None, 32, 4, 128)        262272    
+    conv2d_4 (Conv2D)            (None, 32, 4, 128)        262272
     _________________________________________________________________
-    re_lu_1 (ReLU)               (None, 32, 4, 128)        0         
+    re_lu_1 (ReLU)               (None, 32, 4, 128)        0
     _________________________________________________________________
-    batch_normalization_4 (Batch (None, 32, 4, 128)        512       
+    batch_normalization_4 (Batch (None, 32, 4, 128)        512
     _________________________________________________________________
-    conv2d_5 (Conv2D)            (None, 16, 2, 64)         131136    
+    conv2d_5 (Conv2D)            (None, 16, 2, 64)         131136
     _________________________________________________________________
-    re_lu_2 (ReLU)               (None, 16, 2, 64)         0         
+    re_lu_2 (ReLU)               (None, 16, 2, 64)         0
     _________________________________________________________________
-    batch_normalization_5 (Batch (None, 16, 2, 64)         256       
+    batch_normalization_5 (Batch (None, 16, 2, 64)         256
     _________________________________________________________________
-    conv2d_6 (Conv2D)            (None, 8, 1, 32)          32800     
+    conv2d_6 (Conv2D)            (None, 8, 1, 32)          32800
     _________________________________________________________________
-    re_lu_3 (ReLU)               (None, 8, 1, 32)          0         
+    re_lu_3 (ReLU)               (None, 8, 1, 32)          0
     _________________________________________________________________
-    batch_normalization_6 (Batch (None, 8, 1, 32)          128       
+    batch_normalization_6 (Batch (None, 8, 1, 32)          128
     _________________________________________________________________
-    conv2d_transpose (Conv2DTran (None, 16, 2, 32)         16416     
+    conv2d_transpose (Conv2DTran (None, 16, 2, 32)         16416
     _________________________________________________________________
-    re_lu_4 (ReLU)               (None, 16, 2, 32)         0         
+    re_lu_4 (ReLU)               (None, 16, 2, 32)         0
     _________________________________________________________________
-    batch_normalization_7 (Batch (None, 16, 2, 32)         128       
+    batch_normalization_7 (Batch (None, 16, 2, 32)         128
     _________________________________________________________________
-    conv2d_transpose_1 (Conv2DTr (None, 16, 2, 64)         32832     
+    conv2d_transpose_1 (Conv2DTr (None, 16, 2, 64)         32832
     _________________________________________________________________
-    re_lu_5 (ReLU)               (None, 16, 2, 64)         0         
+    re_lu_5 (ReLU)               (None, 16, 2, 64)         0
     _________________________________________________________________
-    batch_normalization_8 (Batch (None, 16, 2, 64)         256       
+    batch_normalization_8 (Batch (None, 16, 2, 64)         256
     _________________________________________________________________
-    conv2d_transpose_2 (Conv2DTr (None, 32, 4, 128)        131200    
+    conv2d_transpose_2 (Conv2DTr (None, 32, 4, 128)        131200
     _________________________________________________________________
-    batch_normalization_9 (Batch (None, 32, 4, 128)        512       
+    batch_normalization_9 (Batch (None, 32, 4, 128)        512
     _________________________________________________________________
-    re_lu_6 (ReLU)               (None, 32, 4, 128)        0         
+    re_lu_6 (ReLU)               (None, 32, 4, 128)        0
     _________________________________________________________________
-    conv2d_transpose_3 (Conv2DTr (None, 64, 8, 2)          4098      
+    conv2d_transpose_3 (Conv2DTr (None, 64, 8, 2)          4098
     =================================================================
     Total params: 617,282
     Trainable params: 616,130
@@ -236,11 +227,11 @@ Figure3.summary()
 
     Model: "sequential_4"
     _________________________________________________________________
-    Layer (type)                 Output Shape              Param #   
+    Layer (type)                 Output Shape              Param #
     =================================================================
-    sequential_2 (Sequential)    (None, 64, 8, 2)          617282    
+    sequential_2 (Sequential)    (None, 64, 8, 2)          617282
     _________________________________________________________________
-    sequential_3 (Sequential)    (None, 1)                 661697    
+    sequential_3 (Sequential)    (None, 1)                 661697
     =================================================================
     Total params: 1,278,979
     Trainable params: 1,276,931
@@ -251,19 +242,19 @@ Figure3.summary()
 
 ```python
 # training
-def Train(Discriminator, Generator, GAN, Epoche, batch_size):
+def Train(Discriminator, Generator, GAN, Epoch, batch_size):
     # load data
     #Xtrain = np.array([np.array(TrainData[4][ii][0]) for ii in range(len(TrainData[4]))])
     #YTrain = np.array([np.array(TrainData[5][ii][0]) for ii in range(len(TrainData[5]))])
-    # add one size to Xtrain 
+    # add one size to Xtrain
     Y=Y_noisy.reshape(Y_noisy.shape[0],64,8,2)
     H=Channels.reshape(Channels.shape[0],64,8,2)
-    
+
     #Xtrain=Xtrain.reshape(Xtrain.shape[0],128,400,1)
     Num_Batch=int(Y.shape[0]/batch_size)
-    print("Num_Batch in each epoche:",Num_Batch)
-    
-    
+    print("Num_Batch in each epoch:",Num_Batch)
+
+
     # prepare to save results
     #Rloss=[]
     #Floss=[]
@@ -272,93 +263,93 @@ def Train(Discriminator, Generator, GAN, Epoche, batch_size):
     Dloss=list()
     #Accuracy=[]
     Gloss=list()
-    
-    
-    for i in range(Epoche):
+
+
+    for i in range(Epoch):
         for j in range (Num_Batch):
-            
+
             # generate label 1 and 0 for real and fake data respectively
             Real_label=np.ones((batch_size,1))
             Fake_label=np.zeros((batch_size,1))
-            
+
             # calculating loss and accuracy of discriminator on real and fake data
             Ch_index=np.random.randint(0,H.shape[0],batch_size)
             Real_data=H[Ch_index]
-            
+
             Y_index=np.random.randint(0,Y.shape[0],batch_size)
             Fake=Y[Y_index]
             Fake_data=Generator.predict(Fake)
-            
-            
+
+
             Rloss,Racc=Discriminator.train_on_batch(Real_data,Real_label)
             #_,Racc_temp=discriminator.evaluate(Real_data,Real_label, verbose=0)
-            
+
             Floss,Facc=Discriminator.train_on_batch(Fake_data,Fake_label)
             #_,Facc_temp=discriminator.evaluate(Fake_data,Fake_label, verbose=0)
-            
+
             d_loss=0.5*np.add(Rloss,Floss)
-            
+
             # calculating loss of generator and its training
             #discriminator.trainable=False
             Y_index=np.random.randint(0,Y.shape[0],batch_size)
             Fake=Y[Y_index]
             g_loss=GAN.train_on_batch(Fake,Real_label)
-            
+
             #discriminator.trainable=True
 
             # show results for each batch size
             print("%d [Dloss: %f , Racc: %.2f, Facc: %.2f ] [Gloss: %f]" %
                    (j,d_loss,Racc,Facc,g_loss))
-            
+
             Dloss.append(d_loss)
             #Accuracy.append((accuracy_temp))
             #Floss.append((Floss_temp))
             Raccuracy.append(Racc)
             Faccuracy.append(Facc)
             Gloss.append(g_loss)
-            
+
         # save weights of both networks
         Generator.save('generator.h5')
         Discriminator.save('discriminator.h5')
         Generator.save_weights('weightG.h5')
         Discriminator.save_weights('weightsD.h5')
-    
+
     plt.figure(figsize=(18,4))
     plt.subplot(1,2,1)
-    plt.plot(range(Epoche*Num_Batch),Dloss,label='Discriminator')
-    plt.plot(range(Epoche*Num_Batch),Gloss,label='Generator')
-    #plt.plot(range(Epoche*Num_Batch),Gloss,label='Generator')
+    plt.plot(range(Epoch*Num_Batch),Dloss,label='Discriminator')
+    plt.plot(range(Epoch*Num_Batch),Gloss,label='Generator')
+    #plt.plot(range(Epoch*Num_Batch),Gloss,label='Generator')
     plt.xlabel('Batch')
-    plt.xlim(0,Epoche*Num_Batch,10)
+    plt.xlim(0,Epoch*Num_Batch,10)
     plt.ylabel('Loss')
     plt.title('Loss of discriminator and generator')
     plt.legend(prop={"size":18})
     plt.savefig('Loss.png')
     plt.show()
-    
+
     plt.figure(figsize=(18,4))
     plt.subplot(1,2,2)
-    #plt.plot(range(Epoche*Num_Batch),Accuracy,label='Discriminator')
-    plt.plot(range(Epoche*Num_Batch),Raccuracy,label='Real')
-    plt.plot(range(Epoche*Num_Batch),Faccuracy,label='Fake')
+    #plt.plot(range(Epoch*Num_Batch),Accuracy,label='Discriminator')
+    plt.plot(range(Epoch*Num_Batch),Raccuracy,label='Real')
+    plt.plot(range(Epoch*Num_Batch),Faccuracy,label='Fake')
     plt.xlabel('Batch')
-    plt.xlim(0,Epoche*Num_Batch,10)
+    plt.xlim(0,Epoch*Num_Batch,10)
     plt.ylabel('Accuracy')
     plt.title('Accuracy of discriminator on real and fake data')
     plt.legend(prop={"size":18})
     plt.savefig('Accuracy.png')
     plt.show()
-    
 
-Epoche=200
+
+Epoch=200
 batch_size=64
 Generator=define_generator(Input)
 Discriminator=define_discriminator(Input_shape)
 GAN=define_GAN(Generator,Discriminator)
-    
-Train(Discriminator, Generator, GAN, Epoche, batch_size)    
-        
-    
+
+Train(Discriminator, Generator, GAN, Epoch, batch_size)
+
+
 ```
 
     [1;30;43mStreaming output truncated to the last 5000 lines.[0m
@@ -5365,15 +5356,15 @@ Train(Discriminator, Generator, GAN, Epoche, batch_size)
 
 
 
-    
-![png](output_5_1.png)
-    
+
+![png](../figs/output_5_1.png)
 
 
 
-    
-![png](output_5_2.png)
-    
+
+
+![png](../figs/output_5_2.png)
+
 
 
 
@@ -5381,20 +5372,13 @@ Train(Discriminator, Generator, GAN, Epoche, batch_size)
 # uploading trained networks
 os.environ["KERAS_BACKEND"] = "tensorflow"
 np.random.seed(10)
-from google.colab import drive 
-drive.mount('/content/drive')
-Attack_Data=scipy.io.loadmat('/content/drive/My Drive/Test_Data.mat');
+Attack_Data=scipy.io.loadmat('Test_Data.mat');
 Attack_Data = np.array(list(Attack_Data.values())[3])
 print(Attack_Data.shape)
-Channel_real=scipy.io.loadmat('/content/drive/My Drive/Test_Channel.mat');
+Channel_real=scipy.io.loadmat('Test_Channel.mat');
 Channel_real = np.array(list(Channel_real.values())[3])
 print(Channel_real.shape)
 ```
-
-    Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount("/content/drive", force_remount=True).
-    (1000, 64, 8, 2)
-    (1000, 64, 8, 2)
-
 
 
 ```python
@@ -5420,8 +5404,8 @@ fakeDis=Discriminator.predict(Estimated_H)
 
 plt.figure(figsize=(4,4))
 #plt.subplot(1,2,1)
-sns.distplot(realDis, hist=True, kde=True, 
-             color = 'darkblue', 
+sns.distplot(realDis, hist=True, kde=True,
+             color = 'darkblue',
              hist_kws={'edgecolor':'black'},
              kde_kws={'linewidth': 4},label='Normal Data')
 plt.ylabel('Density')
@@ -5429,8 +5413,8 @@ plt.xlabel('Output')
 #plt.xlim(-0.1,0.1,0.01)
 plt.legend()
 plt.figure(figsize=(4,4))
-sns.distplot(fakeDis, hist=True, kde=True, 
-             color = '#E69F00', 
+sns.distplot(fakeDis, hist=True, kde=True,
+             color = '#E69F00',
              hist_kws={'edgecolor':'#D55E00'},
              kde_kws={'linewidth': 4},label='Abnormal Data')
 plt.ylabel('Density')
@@ -5452,2025 +5436,26 @@ print(realDis)
 
 ```
 
-    /usr/local/lib/python3.7/dist-packages/seaborn/distributions.py:2557: FutureWarning: `distplot` is a deprecated function and will be removed in a future version. Please adapt your code to use either `displot` (a figure-level function with similar flexibility) or `histplot` (an axes-level function for histograms).
-      warnings.warn(msg, FutureWarning)
-    /usr/local/lib/python3.7/dist-packages/seaborn/distributions.py:2557: FutureWarning: `distplot` is a deprecated function and will be removed in a future version. Please adapt your code to use either `displot` (a figure-level function with similar flexibility) or `histplot` (an axes-level function for histograms).
-      warnings.warn(msg, FutureWarning)
-
 
     [[8.3677031e-07]
      [4.6080493e-07]
      [3.2140542e-07]
      [6.3176327e-07]
-     [4.9089249e-07]
-     [6.1685932e-07]
-     [3.8808508e-07]
-     [5.9676080e-07]
-     [4.3133034e-07]
-     [4.3061192e-07]
-     [7.8368521e-07]
-     [5.9683782e-07]
-     [6.9776638e-07]
-     [4.4020328e-07]
-     [5.8732007e-07]
-     [7.4665212e-07]
-     [2.5134452e-07]
-     [5.1875179e-07]
-     [3.8948698e-07]
-     [4.5895075e-07]
-     [5.5736507e-07]
-     [2.6669744e-07]
-     [8.2254553e-07]
-     [5.6548765e-07]
-     [5.5932270e-07]
-     [5.4577174e-07]
-     [7.8542820e-07]
-     [2.7738477e-07]
-     [5.4406286e-07]
-     [5.3800011e-07]
-     [4.0171000e-07]
-     [4.6080274e-07]
-     [5.3210408e-07]
-     [5.4856008e-07]
-     [7.0140334e-07]
-     [4.9144131e-07]
-     [2.4100413e-07]
-     [6.7033830e-07]
-     [4.0254739e-07]
-     [5.6886148e-07]
-     [7.6637275e-07]
-     [5.8918664e-07]
-     [3.3069986e-07]
-     [8.9127280e-07]
-     [5.5365530e-07]
-     [5.0413053e-07]
-     [8.6643161e-07]
-     [5.0748446e-07]
-     [5.2089138e-07]
-     [4.0378097e-07]
-     [4.8149116e-07]
-     [4.3523536e-07]
-     [5.1131178e-07]
-     [4.8334550e-07]
-     [7.0043404e-07]
-     [4.2764685e-07]
-     [5.4747824e-07]
-     [6.0969137e-07]
-     [3.8219321e-07]
-     [3.9325988e-07]
-     [1.1139635e-06]
-     [4.8256356e-07]
-     [3.5474568e-07]
-     [6.3063146e-07]
-     [4.3895272e-07]
-     [2.4494332e-07]
-     [4.4566346e-07]
-     [7.3361343e-07]
-     [6.1304820e-07]
-     [4.1089129e-07]
-     [4.9676146e-07]
-     [6.0728655e-07]
-     [4.8764878e-07]
-     [4.3304510e-07]
-     [4.6393899e-07]
-     [8.9292325e-07]
-     [4.4514942e-07]
-     [5.7967395e-07]
-     [4.2807119e-07]
-     [5.8595845e-07]
-     [4.7306582e-07]
-     [3.0071968e-07]
-     [8.5798905e-07]
-     [5.6147428e-07]
-     [1.0995351e-06]
-     [2.5455378e-07]
-     [2.9391654e-07]
-     [5.4323652e-07]
-     [4.6916654e-07]
-     [4.4732965e-07]
-     [5.1941061e-07]
-     [6.1196590e-07]
-     [6.4617200e-07]
-     [4.5434118e-07]
-     [8.3788558e-07]
-     [5.7163572e-07]
-     [7.5948878e-07]
-     [7.1969760e-07]
-     [4.9392850e-07]
-     [4.8329218e-07]
-     [7.1742659e-07]
-     [6.0854927e-07]
-     [3.2281454e-07]
-     [5.2476554e-07]
-     [7.6679913e-07]
-     [6.0425634e-07]
-     [8.9515663e-07]
-     [2.7974136e-07]
-     [7.1055030e-07]
-     [3.2947332e-07]
-     [5.5321971e-07]
-     [5.1908910e-07]
-     [5.4956593e-07]
-     [4.8680488e-07]
-     [5.2459944e-07]
-     [3.7476326e-07]
-     [4.9567637e-07]
-     [7.0433214e-07]
-     [6.6944085e-07]
-     [6.6047556e-07]
-     [5.0914855e-07]
-     [5.5911335e-07]
-     [2.8000824e-07]
-     [3.8017714e-07]
-     [2.5897253e-07]
-     [7.2815988e-07]
-     [3.8801960e-07]
-     [5.1148362e-07]
-     [5.5484008e-07]
-     [4.6980344e-07]
-     [4.5042202e-07]
-     [7.3204552e-07]
-     [7.6317122e-07]
-     [8.4871738e-07]
-     [5.6348040e-07]
-     [6.7244486e-07]
-     [6.5526615e-07]
-     [2.5814560e-07]
-     [7.9294466e-07]
-     [4.3262406e-07]
-     [7.1836422e-07]
-     [1.1487488e-07]
-     [3.6724367e-07]
-     [7.6551976e-07]
-     [5.4146710e-07]
-     [4.1072062e-07]
-     [6.0631459e-07]
-     [6.6697442e-07]
-     [5.9500115e-07]
-     [6.3538562e-07]
-     [3.3978603e-07]
-     [4.5887754e-07]
-     [5.3323765e-07]
-     [7.6546837e-07]
-     [2.8743020e-07]
-     [6.8006415e-07]
-     [2.0876976e-07]
-     [5.5857407e-07]
-     [5.3900970e-07]
-     [7.1882289e-07]
-     [5.5957133e-07]
-     [3.0477420e-07]
-     [5.3260408e-07]
-     [2.8346568e-07]
-     [5.2594680e-07]
-     [5.5044092e-07]
-     [5.2699318e-07]
-     [6.5391094e-07]
-     [5.0759644e-07]
-     [4.9495816e-07]
-     [7.9798230e-07]
-     [5.6672206e-07]
-     [6.0087757e-07]
-     [7.4430841e-07]
-     [4.7330138e-07]
-     [2.9319835e-07]
-     [6.7617555e-07]
-     [2.8183226e-07]
-     [3.3400329e-07]
-     [6.7827756e-07]
-     [4.8471259e-07]
-     [4.3499747e-07]
-     [4.0765218e-07]
-     [6.9665663e-07]
-     [4.2957944e-07]
-     [4.8653629e-07]
-     [5.4053112e-07]
-     [6.0270474e-07]
-     [4.8528341e-07]
-     [5.8406988e-07]
-     [5.1129990e-07]
-     [8.2641088e-07]
-     [8.0995630e-07]
-     [5.3852023e-07]
-     [4.9579086e-07]
-     [5.4416387e-07]
-     [3.4778208e-07]
-     [2.6698390e-07]
-     [6.4838025e-07]
-     [6.4216482e-07]
-     [3.5556593e-07]
-     [5.1701124e-07]
-     [4.7995093e-07]
-     [6.9175678e-07]
-     [6.2555461e-07]
-     [5.3937936e-07]
-     [4.5451355e-07]
-     [3.7167757e-07]
-     [3.6408716e-07]
-     [5.0418765e-07]
-     [3.6750052e-07]
-     [5.6237099e-07]
-     [8.7377873e-07]
-     [4.9581183e-07]
-     [5.8240175e-07]
-     [7.8777612e-07]
-     [4.9107842e-07]
-     [4.8836193e-07]
-     [4.9909215e-07]
-     [5.6736496e-07]
-     [7.0022168e-07]
-     [5.6738429e-07]
-     [7.2872444e-07]
-     [2.9395386e-07]
-     [6.9032109e-07]
-     [5.3078105e-07]
-     [3.5602454e-07]
-     [4.6696627e-07]
-     [5.7235343e-07]
-     [4.2475153e-07]
-     [4.4677401e-07]
-     [4.2265643e-07]
-     [7.4797833e-07]
-     [7.5774045e-07]
-     [5.2596522e-07]
-     [4.9220705e-07]
-     [3.1360952e-07]
-     [8.9260539e-07]
-     [4.0685478e-07]
-     [6.6538644e-07]
-     [7.0339081e-07]
-     [4.9456798e-07]
-     [4.3799059e-07]
-     [5.3647204e-07]
-     [5.7878401e-07]
-     [3.0630642e-07]
-     [5.5993610e-07]
-     [4.6818241e-07]
-     [5.1897916e-07]
-     [8.4265713e-07]
-     [4.1034536e-07]
-     [4.0409699e-07]
-     [2.5184306e-07]
-     [4.7360874e-07]
-     [5.6334795e-07]
-     [7.6872607e-07]
-     [5.2278983e-07]
-     [3.7775311e-07]
-     [4.1148587e-07]
-     [3.9987867e-07]
-     [7.8555058e-07]
-     [6.2834175e-07]
-     [6.9905525e-07]
-     [5.1752818e-07]
-     [5.9732565e-07]
-     [6.8455654e-07]
-     [5.8920682e-07]
-     [7.3627376e-07]
-     [6.0562672e-07]
-     [3.3224254e-07]
-     [5.8684429e-07]
-     [5.0027512e-07]
-     [6.5993112e-07]
-     [7.1463830e-07]
-     [7.6159586e-07]
-     [4.5458307e-07]
-     [7.3836281e-07]
-     [3.1647556e-07]
-     [4.7340853e-07]
-     [3.7702085e-07]
-     [6.6290301e-07]
-     [4.5608488e-07]
-     [5.0172025e-07]
-     [5.2552878e-07]
-     [4.4390072e-07]
-     [6.0719276e-07]
-     [4.8696137e-07]
-     [8.1356768e-07]
-     [8.0783730e-07]
-     [5.7477712e-07]
-     [3.5856002e-07]
-     [4.4422336e-07]
-     [4.8452449e-07]
-     [5.7382726e-07]
-     [5.5708585e-07]
-     [9.0422964e-07]
-     [5.8590638e-07]
-     [7.0350654e-07]
-     [4.3767091e-07]
-     [4.7695033e-07]
-     [3.4950355e-07]
-     [5.7382880e-07]
-     [4.9272199e-07]
-     [5.7243653e-07]
-     [6.2345453e-07]
-     [5.2216853e-07]
-     [3.0377367e-07]
-     [5.0279294e-07]
-     [7.6448185e-07]
-     [7.6925539e-07]
-     [4.0984355e-07]
-     [1.8042732e-07]
-     [5.1794871e-07]
-     [5.6294834e-07]
-     [8.1582709e-07]
-     [6.3544803e-07]
-     [6.7275403e-07]
-     [8.5938996e-07]
-     [5.0046299e-07]
-     [8.4061281e-07]
-     [4.0070617e-07]
-     [5.3731435e-07]
-     [5.0756211e-07]
-     [4.2672843e-07]
-     [4.7679140e-07]
-     [4.4376844e-07]
-     [6.0005988e-07]
-     [5.4030983e-07]
-     [5.4939687e-07]
-     [6.1413004e-07]
-     [5.9127967e-07]
-     [5.4160978e-07]
-     [5.8436132e-07]
-     [5.7458698e-07]
-     [5.8046953e-07]
-     [3.9939067e-07]
-     [7.4863163e-07]
-     [3.8366380e-07]
-     [8.2347361e-07]
-     [4.0027510e-07]
-     [9.0500714e-07]
-     [4.0010605e-07]
-     [4.0244879e-07]
-     [6.3880469e-07]
-     [7.7498038e-07]
-     [5.5670347e-07]
-     [1.7741633e-07]
-     [7.3015065e-07]
-     [7.1179534e-07]
-     [8.3610308e-07]
-     [6.7587166e-07]
-     [6.7562485e-07]
-     [6.9236864e-07]
-     [5.3121448e-07]
-     [6.6554583e-07]
-     [7.2116899e-07]
-     [4.4423214e-07]
-     [5.8467270e-07]
-     [4.4848855e-07]
-     [6.4723849e-07]
-     [6.1414153e-07]
-     [5.9593060e-07]
-     [4.3868857e-07]
-     [6.8013367e-07]
-     [3.2886146e-07]
-     [3.8683118e-07]
-     [6.4891276e-07]
-     [1.8635832e-07]
-     [5.6866133e-07]
-     [6.4121235e-07]
-     [5.1147754e-07]
-     [4.2774232e-07]
-     [8.4382782e-07]
-     [4.5976856e-07]
-     [4.8715964e-07]
-     [7.0653408e-07]
-     [5.6885119e-07]
-     [3.3644940e-07]
-     [4.9978723e-07]
-     [5.9811168e-07]
-     [4.9054228e-07]
-     [4.1959282e-07]
-     [6.7865744e-07]
-     [6.1017306e-07]
-     [5.2013513e-07]
-     [8.9120491e-08]
-     [8.3558410e-07]
-     [7.6607455e-07]
-     [3.8889431e-07]
-     [5.7123475e-07]
-     [5.8876549e-07]
-     [2.8833736e-07]
-     [8.1928920e-07]
-     [5.9654906e-07]
-     [2.5734045e-07]
-     [3.0721856e-07]
-     [4.9529763e-07]
-     [6.0703189e-07]
-     [6.8257685e-07]
-     [7.3983227e-07]
-     [3.9439038e-07]
-     [4.1072639e-07]
-     [5.2204058e-07]
-     [5.6847762e-07]
-     [5.0014262e-07]
-     [2.4871451e-07]
-     [9.8898067e-07]
-     [4.7660984e-07]
-     [3.6140835e-07]
-     [3.6763373e-07]
-     [2.7235626e-07]
-     [4.4096745e-07]
-     [6.0872321e-07]
-     [4.1946601e-07]
-     [5.3980648e-07]
-     [4.7741082e-07]
-     [6.6641172e-07]
-     [3.7594970e-07]
-     [5.4846225e-07]
-     [3.9736301e-07]
-     [4.8226661e-07]
-     [3.0226894e-07]
-     [3.4201025e-07]
-     [5.9684146e-07]
-     [3.9154736e-07]
-     [2.5240649e-07]
-     [6.7451572e-07]
-     [5.6465888e-07]
-     [3.6886394e-07]
-     [3.8436187e-07]
-     [7.0379502e-07]
-     [4.4485648e-07]
-     [5.0853987e-07]
-     [2.8665613e-07]
-     [4.8236114e-07]
-     [5.7607298e-07]
-     [3.5187475e-07]
-     [5.7595088e-07]
-     [4.2021674e-07]
-     [1.7442404e-07]
-     [4.5686636e-07]
-     [5.6507895e-07]
-     [3.5989245e-07]
-     [4.3838131e-07]
-     [4.6541436e-07]
-     [5.1224720e-07]
-     [6.1580704e-07]
-     [5.4892291e-07]
-     [6.4606058e-07]
-     [3.9877997e-07]
-     [5.4700035e-07]
-     [6.2530899e-07]
-     [7.0304623e-07]
-     [4.3497019e-07]
-     [5.3985394e-07]
-     [6.3561936e-07]
-     [6.0610387e-07]
-     [4.6520000e-07]
-     [6.2194965e-07]
-     [5.1102995e-07]
-     [6.9847226e-07]
-     [3.2641481e-07]
-     [7.1410284e-07]
-     [6.1662774e-07]
-     [8.1607914e-07]
-     [6.3568427e-07]
-     [5.9311242e-07]
-     [2.8143964e-07]
-     [5.8685492e-07]
-     [9.4394142e-07]
-     [5.3206799e-07]
-     [4.5005271e-07]
-     [3.7768262e-07]
-     [5.5924448e-07]
-     [9.1141959e-07]
-     [2.8088184e-07]
-     [9.2077056e-07]
-     [4.6567101e-07]
-     [6.5631843e-07]
-     [3.6077432e-07]
-     [5.6203436e-07]
-     [2.8785024e-07]
-     [4.8311699e-07]
-     [4.9432288e-07]
-     [8.9306269e-08]
-     [5.9672408e-07]
-     [2.8616674e-07]
-     [4.0251973e-07]
-     [4.8286159e-07]
-     [6.9028465e-07]
-     [4.2940854e-07]
-     [1.8663769e-07]
-     [3.7935143e-07]
-     [5.5687457e-07]
-     [5.1592576e-07]
-     [2.3137798e-07]
-     [2.8670996e-07]
-     [6.3283528e-07]
-     [4.5417630e-07]
-     [4.0741560e-07]
-     [4.1780356e-07]
-     [3.0868941e-07]
-     [4.6640179e-07]
-     [5.1701477e-07]
-     [6.0616082e-07]
-     [5.5350210e-07]
-     [5.0673270e-07]
-     [4.1544394e-07]
-     [5.1599625e-07]
-     [3.7422785e-07]
-     [5.1123209e-07]
-     [5.9307342e-07]
-     [6.9134114e-07]
-     [7.9666518e-07]
-     [5.6997465e-07]
-     [5.3398890e-07]
-     [7.8464205e-07]
-     [5.3530994e-07]
-     [3.6452496e-07]
-     [4.7687035e-07]
-     [4.6174000e-07]
-     [4.4822636e-07]
-     [6.1897146e-07]
-     [3.6244205e-07]
-     [7.3743735e-07]
-     [2.9875531e-07]
-     [2.5238384e-07]
-     [3.4446742e-07]
-     [4.3119434e-07]
-     [6.8286863e-07]
-     [2.7641437e-07]
-     [6.3496918e-07]
-     [4.3320051e-07]
-     [7.0622116e-07]
-     [4.5542893e-07]
-     [3.7896027e-07]
-     [5.1333103e-07]
-     [5.1251578e-07]
-     [5.9375327e-07]
-     [3.9426530e-07]
-     [4.3037574e-07]
-     [7.6843253e-07]
-     [2.9958073e-07]
-     [4.6859816e-07]
-     [4.2815697e-07]
-     [7.0477222e-07]
-     [7.0992604e-07]
-     [6.9233897e-07]
-     [5.5826331e-07]
-     [3.8788608e-07]
-     [4.8358118e-07]
-     [5.8358080e-07]
-     [8.5653517e-07]
-     [4.7937942e-07]
-     [5.3241700e-07]
-     [6.5111340e-07]
-     [6.0002691e-07]
-     [6.8021382e-07]
-     [4.0444036e-07]
-     [5.6043791e-07]
-     [7.3512740e-07]
-     [3.8551914e-07]
-     [3.5441906e-07]
-     [4.1074691e-07]
-     [5.8169644e-07]
-     [7.4550974e-07]
-     [3.1590542e-07]
-     [2.1417647e-07]
-     [6.9547048e-07]
-     [3.4419185e-07]
-     [4.1054392e-07]
-     [3.4436607e-07]
-     [7.2768171e-07]
-     [6.5109236e-07]
-     [1.1493428e-06]
-     [6.1414522e-07]
-     [4.8447635e-07]
-     [8.1690314e-07]
-     [5.0993066e-07]
-     [8.5105791e-07]
-     [6.4053205e-07]
-     [6.2014499e-07]
-     [5.7502029e-07]
-     [4.2815913e-07]
-     [2.7345362e-07]
-     [6.4237747e-07]
-     [6.1645437e-07]
-     [6.2760637e-07]
-     [3.0348315e-07]
-     [3.2501066e-07]
-     [3.6203471e-07]
-     [5.7699100e-07]
-     [4.1808175e-07]
-     [7.6374823e-07]
-     [5.6446066e-07]
-     [2.4767377e-07]
-     [9.2973607e-07]
-     [4.9844721e-07]
-     [7.2122185e-07]
-     [7.9180745e-07]
-     [4.6096937e-07]
-     [7.7582541e-07]
-     [4.0452699e-07]
-     [7.6941024e-07]
-     [4.0946810e-07]
-     [6.6005271e-07]
-     [6.3151401e-07]
-     [4.7985924e-07]
-     [6.7934320e-07]
-     [5.0141807e-07]
-     [5.7242380e-07]
-     [8.6873899e-07]
-     [6.7853705e-07]
-     [8.4472759e-07]
-     [3.6186964e-07]
-     [5.4227701e-07]
-     [2.4097301e-07]
-     [5.1856534e-07]
-     [5.8697537e-07]
-     [6.2035150e-07]
-     [6.5971096e-07]
-     [6.6997018e-07]
-     [1.6494864e-07]
-     [7.3769360e-07]
-     [5.5804935e-07]
-     [5.3956637e-07]
-     [7.1237486e-07]
-     [5.5105761e-07]
-     [3.1420385e-07]
-     [6.8140071e-07]
-     [6.0537832e-07]
-     [3.7790110e-07]
-     [6.3591835e-07]
-     [6.1546871e-07]
-     [8.9046392e-07]
-     [6.9861892e-07]
-     [7.3793086e-07]
-     [3.0358490e-07]
-     [3.3877734e-07]
-     [4.3333819e-07]
-     [7.4192383e-07]
-     [4.8599708e-07]
-     [2.2546953e-07]
-     [2.1105889e-07]
-     [6.0866341e-07]
-     [3.1625808e-07]
-     [5.8568355e-07]
-     [5.6870545e-07]
-     [6.5691023e-07]
-     [4.2359380e-07]
-     [5.0274258e-07]
-     [3.7381520e-07]
-     [7.5590049e-07]
-     [6.7746282e-07]
-     [1.0852796e-06]
-     [4.7668829e-07]
-     [5.0297524e-07]
-     [7.5674876e-07]
-     [5.0964616e-07]
-     [5.0848973e-07]
-     [6.6418272e-07]
-     [4.2849251e-07]
-     [8.8343199e-07]
-     [5.3046625e-07]
-     [5.6733973e-07]
-     [4.5120072e-07]
-     [2.1429116e-07]
-     [4.3336195e-07]
-     [6.3637265e-07]
-     [3.2000332e-07]
-     [9.8210103e-07]
-     [2.8256420e-07]
-     [6.6449911e-07]
-     [4.0385490e-07]
-     [3.5826889e-07]
-     [9.3304277e-07]
-     [4.6788034e-07]
-     [6.9216503e-07]
-     [3.3009854e-07]
-     [5.1467197e-07]
-     [5.3750233e-07]
-     [6.1071091e-07]
-     [4.7450453e-07]
-     [3.5577793e-07]
-     [6.2302206e-07]
-     [4.9964058e-07]
-     [4.9192442e-07]
-     [4.9872745e-07]
-     [5.7111106e-07]
-     [6.4480957e-07]
-     [8.9429682e-07]
-     [6.4975637e-07]
-     [4.3811906e-07]
-     [5.5266793e-07]
-     [3.0123340e-07]
-     [2.6059087e-07]
-     [6.0228285e-07]
-     [9.1021991e-07]
-     [7.4179735e-07]
-     [3.0578897e-07]
-     [6.2492620e-07]
-     [4.5916073e-07]
-     [4.8098354e-07]
-     [4.5351013e-07]
-     [2.5724998e-07]
-     [4.2415638e-07]
-     [5.1664040e-07]
-     [4.8350131e-07]
-     [3.0826078e-07]
-     [5.0688163e-07]
-     [5.0647873e-07]
-     [3.8554168e-07]
-     [6.3143722e-07]
-     [3.6687248e-07]
-     [5.1088426e-07]
-     [5.6442161e-07]
-     [4.7787211e-07]
-     [5.6347062e-07]
-     [4.5190447e-07]
-     [5.6061469e-07]
-     [3.7804739e-07]
-     [4.1706195e-07]
-     [5.4383406e-07]
-     [5.3964942e-07]
-     [5.1492799e-07]
-     [6.7686392e-07]
-     [6.5624204e-07]
-     [3.7751516e-07]
-     [4.4219709e-07]
-     [6.0955341e-07]
-     [7.6050736e-07]
-     [5.9510580e-07]
-     [7.0677618e-07]
-     [7.2549858e-07]
-     [5.6411199e-07]
-     [5.8186265e-07]
-     [4.4965739e-07]
-     [4.5872983e-07]
-     [3.3496417e-07]
-     [6.7022154e-07]
-     [2.8213540e-07]
-     [3.5655097e-07]
-     [7.0565193e-07]
-     [5.9899997e-07]
-     [6.1146045e-07]
-     [5.4019824e-07]
-     [4.6859262e-07]
-     [5.5709108e-07]
-     [7.0367560e-07]
-     [3.6980305e-07]
-     [5.4946645e-07]
-     [5.2990180e-07]
-     [4.6133465e-07]
-     [3.7247571e-07]
-     [5.4752758e-07]
-     [4.9569940e-07]
-     [6.9401483e-07]
-     [4.5254868e-07]
-     [3.7068943e-07]
-     [6.1785488e-07]
-     [5.3383997e-07]
-     [6.0655520e-07]
-     [4.7012279e-07]
-     [4.8461459e-07]
-     [1.9841394e-07]
-     [6.8147256e-07]
-     [5.4571791e-07]
-     [1.1448365e-06]
-     [6.2000311e-07]
-     [6.4531486e-07]
-     [5.6055603e-07]
-     [3.5801671e-07]
-     [5.8419278e-07]
-     [3.9056829e-07]
-     [5.7107275e-07]
-     [6.5341703e-07]
-     [5.3135471e-07]
-     [6.4972346e-07]
-     [7.2339134e-07]
-     [2.2741219e-07]
-     [7.0941769e-07]
-     [5.6279401e-07]
-     [4.4623474e-07]
-     [5.6465501e-07]
-     [7.6245078e-07]
-     [5.7177567e-07]
-     [2.8534254e-07]
-     [4.2768306e-07]
-     [4.0734676e-07]
-     [7.2425030e-07]
-     [6.3292009e-07]
-     [7.0185837e-07]
-     [9.3009015e-07]
-     [3.9981458e-07]
-     [4.5047128e-07]
-     [4.7664096e-07]
-     [6.2784750e-07]
-     [6.7832127e-07]
-     [5.3737540e-07]
-     [5.3077019e-07]
-     [6.7558983e-07]
-     [5.4650684e-07]
-     [7.0981298e-07]
-     [4.7374346e-07]
-     [3.5164044e-07]
-     [4.6245196e-07]
-     [6.3424716e-07]
-     [4.8629772e-07]
-     [3.9787051e-07]
-     [4.6096369e-07]
-     [7.7387324e-07]
-     [3.8371866e-07]
-     [7.9334961e-07]
-     [5.7409699e-07]
-     [6.2532928e-07]
-     [5.9601382e-07]
-     [6.6922803e-07]
-     [1.3442268e-07]
-     [3.9357275e-07]
-     [7.2245638e-07]
-     [2.4225537e-07]
-     [6.8572899e-07]
-     [1.7898330e-07]
-     [8.5214947e-07]
-     [5.6948818e-07]
-     [3.6541348e-07]
-     [2.9044799e-07]
-     [3.7991120e-07]
-     [4.7177710e-07]
-     [6.8024110e-07]
-     [6.2569006e-07]
-     [5.5192322e-07]
-     [5.2470250e-07]
-     [5.7510186e-07]
-     [7.7226008e-07]
-     [3.8543669e-07]
-     [3.0974132e-07]
-     [5.7172576e-07]
-     [7.4376817e-07]
-     [3.9634185e-07]
-     [5.8140483e-07]
-     [8.8868882e-07]
-     [4.8686616e-07]
-     [5.1654604e-07]
-     [3.6590617e-07]
-     [4.5007437e-07]
-     [3.4363919e-07]
-     [7.0713048e-07]
-     [4.1363387e-07]
-     [5.4668510e-07]
-     [5.9316119e-07]
-     [4.6114002e-07]
-     [7.3304409e-07]
-     [5.4617163e-07]
-     [7.9899758e-07]
-     [6.1928171e-07]
-     [4.5817302e-07]
-     [6.4267647e-07]
-     [3.9446064e-07]
-     [4.9141408e-07]
-     [7.2697173e-07]
-     [5.8332870e-07]
-     [3.7428697e-07]
-     [3.5949023e-07]
-     [7.8655876e-07]
-     [3.4468752e-07]
-     [5.7127579e-07]
-     [6.0932643e-07]
-     [4.8800825e-07]
-     [2.3243638e-07]
-     [3.3857677e-07]
-     [7.0270983e-07]
-     [5.7804590e-07]
-     [4.0827064e-07]
-     [6.5023289e-07]
-     [6.3455184e-07]
-     [8.0324980e-07]
-     [8.7917169e-07]
-     [5.3431529e-07]
-     [6.2596803e-07]
-     [4.9939098e-07]
-     [3.3198324e-07]
-     [4.2976478e-07]
-     [4.5812342e-07]
-     [1.6907791e-07]
-     [6.3430889e-07]
-     [5.4986981e-07]
-     [4.8910528e-07]
-     [2.8202106e-07]
-     [2.4453129e-07]
-     [7.6209477e-07]
-     [3.9572015e-07]
-     [5.8993254e-07]
-     [6.1231708e-07]
-     [3.8431043e-07]
-     [3.2618715e-07]
-     [6.6463542e-07]
-     [6.7947786e-07]
-     [7.6946094e-07]
-     [4.5406722e-07]
-     [3.6643405e-07]
-     [4.3536838e-07]
-     [4.4002616e-07]
-     [4.4368539e-07]
-     [6.5790334e-07]
-     [4.5744380e-07]
-     [4.8079528e-07]
-     [6.3145740e-07]
-     [3.7988275e-07]
-     [6.6084158e-07]
-     [4.4558661e-07]
-     [4.1010014e-07]
-     [7.8616267e-07]
-     [4.6321060e-07]
-     [5.0833546e-07]
-     [1.5796496e-07]
-     [6.6415578e-07]
-     [5.7971442e-07]
-     [4.5564414e-07]
-     [3.0259849e-07]
-     [4.3436648e-07]
-     [6.9927711e-07]
-     [5.9482068e-07]
-     [5.7271131e-07]
-     [4.9516143e-07]
-     [4.9180335e-07]
-     [4.9035884e-07]
-     [6.2869981e-07]
-     [3.4954928e-07]
-     [4.8786586e-07]
-     [4.0084339e-07]
-     [6.0483046e-07]
-     [6.7100166e-07]
-     [4.8852917e-07]
-     [6.4950751e-07]
-     [6.2102947e-07]
-     [3.7033232e-07]
-     [6.0519960e-07]
-     [5.3719009e-07]
-     [4.5075438e-07]
-     [7.7824149e-07]
-     [7.9611931e-07]
-     [5.6647502e-07]
-     [8.5202225e-07]
-     [8.9018954e-07]
-     [6.3991803e-07]
-     [6.1752235e-07]
-     [6.5654439e-07]
-     [4.9080370e-07]
-     [5.8777437e-07]
-     [4.4560244e-07]
-     [5.5248165e-07]
-     [6.3569996e-07]
-     [5.8942487e-07]
-     [8.1836868e-07]
-     [6.3818703e-07]
-     [5.3912584e-07]
-     [2.9877566e-07]
-     [4.9815765e-07]
-     [5.7711679e-07]
-     [5.4879638e-07]
-     [3.9780849e-07]
-     [8.3451482e-07]
-     [6.0627087e-07]
-     [6.4481128e-07]
-     [5.5839439e-07]
-     [4.2399580e-07]
-     [5.4901579e-07]
-     [1.7742184e-07]
-     [4.4893173e-07]
-     [4.6137805e-07]
-     [5.5047292e-07]
-     [1.5201029e-07]
-     [5.3540191e-07]
-     [5.0440195e-07]
-     [6.6842944e-07]
-     [2.6319645e-07]
-     [5.6955753e-07]
-     [6.2411084e-07]
-     [3.7399624e-07]
-     [5.4661211e-07]
-     [6.2956519e-07]
-     [6.7107487e-07]
-     [4.1707557e-07]
-     [5.5499038e-07]
-     [4.0783078e-07]
-     [5.5158267e-07]
-     [3.9089727e-07]
-     [5.6430451e-07]
-     [5.6100066e-07]
-     [8.4481064e-07]
-     [8.0473859e-07]
-     [1.3242466e-07]
-     [6.8059694e-07]
-     [4.9694250e-07]
-     [7.1378906e-07]
-     [6.1034279e-07]
-     [3.7039015e-07]
-     [3.7052666e-07]
-     [4.1741868e-07]]
-    [[ 1.68671943e-02]
-     [ 1.83100775e-02]
-     [ 2.63270978e-02]
-     [ 3.11803147e-02]
-     [ 4.94524045e-03]
-     [ 1.91734657e-02]
-     [ 3.70042846e-02]
-     [ 2.08182782e-02]
-     [ 1.45378578e-02]
-     [ 2.74385028e-02]
-     [ 8.12534615e-03]
-     [ 2.04501934e-02]
-     [ 1.26445200e-02]
-     [ 7.39836507e-03]
-     [ 2.59059183e-02]
-     [ 3.78501019e-03]
-     [ 2.76658125e-03]
-     [ 1.50670623e-02]
-     [ 2.45446209e-02]
-     [ 8.61177780e-03]
-     [ 4.10440490e-02]
-     [ 3.14036608e-02]
-     [-2.34218873e-03]
-     [ 1.48835508e-02]
-     [ 2.68068090e-02]
-     [ 1.05749415e-02]
-     [ 1.53370239e-02]
-     [ 2.28523836e-03]
-     [ 2.06904374e-02]
-     [ 1.29720327e-02]
-     [ 2.96075623e-02]
-     [ 3.57128866e-03]
-     [ 2.74709007e-03]
-     [ 5.02664689e-03]
-     [ 3.01382300e-02]
-     [-1.96794234e-02]
-     [ 1.50367096e-02]
-     [ 1.06457938e-02]
-     [-7.40058906e-03]
-     [ 4.19638604e-02]
-     [ 1.19571360e-02]
-     [ 8.10527802e-03]
-     [ 1.95998587e-02]
-     [ 1.52170914e-03]
-     [ 2.15895399e-02]
-     [-1.62830576e-02]
-     [ 1.20020751e-02]
-     [ 2.14938801e-02]
-     [ 1.01606809e-02]
-     [ 1.27127003e-02]
-     [ 2.92747170e-02]
-     [-1.72259286e-03]
-     [ 1.38610955e-02]
-     [ 8.98797717e-03]
-     [ 1.07304184e-02]
-     [ 1.29280519e-02]
-     [ 1.11868195e-02]
-     [ 9.37300548e-03]
-     [ 1.60620082e-02]
-     [-1.30062904e-02]
-     [ 1.42480126e-02]
-     [ 2.47250013e-02]
-     [-1.26954215e-03]
-     [ 9.65239108e-03]
-     [ 9.63070244e-03]
-     [-5.21960389e-03]
-     [ 1.30405854e-02]
-     [ 2.12121196e-02]
-     [ 5.08170389e-03]
-     [ 9.37624648e-03]
-     [ 1.06840245e-02]
-     [ 8.79230723e-03]
-     [ 3.11446488e-02]
-     [-7.97953457e-04]
-     [ 2.18972303e-02]
-     [ 1.87038668e-02]
-     [ 2.18819417e-02]
-     [ 6.76787412e-03]
-     [ 1.48481298e-02]
-     [ 1.07601685e-02]
-     [ 9.29158926e-03]
-     [ 3.12811881e-02]
-     [ 1.82226449e-02]
-     [-7.49677420e-04]
-     [ 1.26968706e-02]
-     [ 4.26626159e-03]
-     [ 1.56898648e-02]
-     [ 7.75151700e-03]
-     [ 1.19025838e-02]
-     [ 3.39410082e-02]
-     [ 1.56303197e-02]
-     [ 1.82934143e-02]
-     [-1.72630176e-02]
-     [ 1.06856087e-02]
-     [ 2.35278104e-02]
-     [-3.01942602e-03]
-     [ 9.54278558e-03]
-     [ 2.82580294e-02]
-     [ 8.87350459e-03]
-     [ 8.65796022e-03]
-     [ 1.40565541e-03]
-     [-2.97105871e-05]
-     [ 1.13974288e-02]
-     [ 7.11795874e-03]
-     [-9.05996189e-03]
-     [ 1.48181487e-02]
-     [ 7.29271537e-03]
-     [-3.14746797e-03]
-     [ 1.22714192e-02]
-     [ 1.17895631e-02]
-     [ 1.91412345e-02]
-     [ 2.02919133e-02]
-     [ 3.71980993e-03]
-     [ 1.71647221e-02]
-     [ 3.61355618e-02]
-     [-2.10752338e-03]
-     [ 1.51639367e-02]
-     [ 1.69708449e-02]
-     [ 1.09417988e-02]
-     [ 1.64245442e-02]
-     [ 1.93121321e-02]
-     [ 1.13766380e-02]
-     [ 3.85505194e-03]
-     [ 4.20236066e-02]
-     [-2.12155469e-03]
-     [ 6.99503254e-03]
-     [ 2.78299712e-02]
-     [-3.02410964e-03]
-     [-7.53446762e-03]
-     [ 1.73245631e-02]
-     [ 5.91971958e-03]
-     [ 3.29393819e-02]
-     [ 3.90054937e-03]
-     [ 1.39959082e-02]
-     [ 1.65501069e-02]
-     [ 1.92264821e-02]
-     [ 3.30314077e-02]
-     [ 1.26315299e-02]
-     [ 1.08054737e-02]
-     [-5.03136823e-03]
-     [ 9.29532945e-03]
-     [ 2.31244192e-02]
-     [ 1.19430497e-02]
-     [ 1.92437638e-02]
-     [-5.85847488e-03]
-     [ 1.26205422e-02]
-     [ 1.29389185e-02]
-     [ 2.47769952e-02]
-     [ 2.52012978e-03]
-     [ 1.52977072e-02]
-     [ 2.46382579e-02]
-     [ 1.61159914e-02]
-     [ 1.75774731e-02]
-     [ 9.63185169e-03]
-     [ 5.40320156e-03]
-     [ 1.18534742e-02]
-     [ 2.71389242e-02]
-     [ 2.42670700e-02]
-     [ 1.42679662e-02]
-     [ 1.65294819e-02]
-     [-1.45747536e-03]
-     [ 1.87436752e-02]
-     [ 1.77292619e-02]
-     [ 1.65772215e-02]
-     [ 6.80133142e-03]
-     [ 3.46309389e-03]
-     [-1.56961568e-03]
-     [-2.80352868e-03]
-     [ 2.88380869e-02]
-     [ 3.02651450e-02]
-     [-2.34629959e-04]
-     [ 1.13615841e-02]
-     [ 4.20157611e-02]
-     [ 1.17653664e-02]
-     [-4.83887224e-03]
-     [-1.69005338e-03]
-     [ 2.40154918e-02]
-     [ 2.60497425e-02]
-     [ 1.31777972e-02]
-     [ 1.04916217e-02]
-     [ 4.23537455e-02]
-     [ 1.73843391e-02]
-     [ 3.43505368e-02]
-     [ 4.49110754e-03]
-     [ 3.37731233e-03]
-     [ 2.05579568e-02]
-     [ 2.32843347e-02]
-     [ 6.35192823e-03]
-     [ 4.23124526e-03]
-     [-7.68603384e-03]
-     [ 2.37863939e-02]
-     [ 1.93844847e-02]
-     [-1.54462410e-04]
-     [ 1.76582448e-02]
-     [ 1.56928841e-02]
-     [ 1.52609982e-02]
-     [ 1.26190688e-02]
-     [ 1.55771254e-02]
-     [ 6.03224616e-03]
-     [ 1.34921558e-02]
-     [ 2.12608930e-02]
-     [-1.24249374e-04]
-     [ 7.13763107e-03]
-     [ 2.41001397e-02]
-     [ 1.76788177e-02]
-     [ 1.01785120e-02]
-     [-7.07600825e-03]
-     [ 7.85902701e-03]
-     [ 4.46592644e-03]
-     [-1.93396490e-03]
-     [-4.81605064e-03]
-     [ 2.87889838e-02]
-     [ 2.57186964e-03]
-     [ 1.38962185e-02]
-     [ 9.33813397e-03]
-     [ 1.36328824e-02]
-     [ 2.04682909e-02]
-     [ 1.48419682e-02]
-     [ 2.61362921e-02]
-     [-4.99151694e-03]
-     [ 7.51677388e-03]
-     [ 3.19581106e-02]
-     [ 1.07543189e-02]
-     [-5.09571191e-03]
-     [-1.86307542e-03]
-     [ 2.00352892e-02]
-     [ 7.34012108e-03]
-     [ 9.31068603e-03]
-     [ 1.87923126e-02]
-     [ 2.90736128e-02]
-     [ 9.65241157e-03]
-     [ 1.91492476e-02]
-     [ 2.72322744e-02]
-     [ 2.01936029e-02]
-     [ 1.94855668e-02]
-     [ 6.52829371e-03]
-     [ 1.55004803e-02]
-     [ 2.51955446e-02]
-     [ 1.11180553e-02]
-     [ 1.45909993e-03]
-     [ 1.64122786e-02]
-     [ 4.04021069e-02]
-     [ 1.04534794e-02]
-     [ 1.88388787e-02]
-     [ 5.86678553e-03]
-     [ 1.91320907e-02]
-     [ 1.52922161e-02]
-     [ 1.05777700e-02]
-     [ 1.27592757e-02]
-     [ 4.38742340e-03]
-     [ 1.80476047e-02]
-     [ 1.15525741e-02]
-     [ 1.65263023e-02]
-     [-1.75734386e-02]
-     [ 1.62751339e-02]
-     [ 2.94320881e-02]
-     [ 4.35731374e-04]
-     [ 5.91031648e-03]
-     [-2.66629085e-03]
-     [ 2.53518205e-02]
-     [ 1.67545546e-02]
-     [-5.90387359e-03]
-     [ 2.07691081e-02]
-     [ 2.01351158e-02]
-     [ 1.95665732e-02]
-     [ 4.00984287e-03]
-     [ 2.51986124e-02]
-     [ 1.70693323e-02]
-     [ 1.50997685e-02]
-     [ 1.87031068e-02]
-     [ 1.34544177e-02]
-     [ 2.93141464e-03]
-     [ 6.15884224e-03]
-     [ 1.95723251e-02]
-     [ 8.23814794e-03]
-     [ 5.97589463e-03]
-     [ 2.63401885e-02]
-     [ 5.89998346e-03]
-     [ 2.80922949e-02]
-     [-7.79685425e-03]
-     [ 1.08732302e-02]
-     [ 1.92980748e-02]
-     [ 1.18667986e-02]
-     [ 1.91402305e-02]
-     [-2.96633318e-03]
-     [-1.12595933e-03]
-     [ 2.75334679e-02]
-     [ 2.57178023e-03]
-     [ 1.55669795e-02]
-     [ 1.42575735e-02]
-     [ 1.43527938e-02]
-     [ 2.61172056e-02]
-     [ 1.79570261e-02]
-     [ 1.84792411e-02]
-     [ 1.57538727e-02]
-     [ 8.43612477e-04]
-     [ 2.29597948e-02]
-     [ 1.32615669e-02]
-     [ 4.60015889e-03]
-     [ 1.95033923e-02]
-     [ 9.32193547e-03]
-     [ 2.50545684e-02]
-     [ 1.39948400e-03]
-     [-9.90754366e-03]
-     [ 2.37054750e-02]
-     [ 1.43168485e-02]
-     [ 1.21783996e-02]
-     [ 4.37689293e-03]
-     [ 9.50729381e-03]
-     [ 1.45064574e-02]
-     [ 1.87084600e-02]
-     [ 1.76302791e-02]
-     [ 2.80644912e-02]
-     [ 1.82940392e-03]
-     [ 1.49442339e-02]
-     [ 1.96566079e-02]
-     [ 8.66802409e-03]
-     [-6.90595806e-03]
-     [ 2.53190659e-02]
-     [ 9.39430855e-03]
-     [ 1.61577333e-02]
-     [ 1.11591909e-02]
-     [ 3.51826586e-02]
-     [-3.50054819e-04]
-     [ 1.59787275e-02]
-     [ 3.40483487e-02]
-     [ 2.55593136e-02]
-     [-4.87095769e-03]
-     [ 2.64740773e-02]
-     [ 1.23407571e-02]
-     [ 1.02092540e-02]
-     [ 1.89089179e-02]
-     [ 1.77150052e-02]
-     [ 6.97997771e-03]
-     [-1.76371653e-02]
-     [ 8.94741528e-03]
-     [ 1.62714552e-02]
-     [ 1.17035024e-02]
-     [ 6.16290513e-03]
-     [ 1.34425377e-03]
-     [ 1.05567137e-02]
-     [ 8.17014370e-03]
-     [ 2.56677289e-02]
-     [ 7.46346964e-03]
-     [ 1.92724988e-02]
-     [ 2.11529844e-02]
-     [ 1.43940933e-03]
-     [ 1.14430450e-02]
-     [ 2.72419546e-02]
-     [ 1.63812228e-02]
-     [ 4.68878401e-03]
-     [ 3.00723352e-02]
-     [-2.43723812e-03]
-     [ 2.55153477e-02]
-     [ 1.78296398e-02]
-     [ 1.81798497e-03]
-     [-1.39062759e-02]
-     [ 2.61056749e-03]
-     [ 2.24241652e-02]
-     [ 8.83048028e-03]
-     [ 1.69028938e-02]
-     [ 1.11612380e-02]
-     [ 2.00630911e-02]
-     [ 1.19420514e-03]
-     [ 8.59152991e-03]
-     [ 2.44956426e-02]
-     [ 4.04895982e-03]
-     [ 4.10084566e-03]
-     [ 4.47153579e-03]
-     [ 2.62845913e-03]
-     [ 5.64615941e-03]
-     [ 5.82766021e-03]
-     [-5.59975952e-03]
-     [ 1.23988353e-02]
-     [ 2.19630450e-02]
-     [-6.58654142e-03]
-     [ 1.09943077e-02]
-     [ 1.79375261e-02]
-     [ 3.05947531e-02]
-     [ 5.37653593e-03]
-     [ 2.46547982e-02]
-     [ 1.85887218e-02]
-     [ 3.95071805e-02]
-     [ 2.59265229e-02]
-     [ 1.64173767e-02]
-     [ 2.55421773e-02]
-     [ 1.01381177e-02]
-     [ 2.03431025e-02]
-     [ 5.22238109e-03]
-     [ 2.65135877e-02]
-     [ 2.11244784e-02]
-     [ 1.12940185e-02]
-     [ 1.98856071e-02]
-     [ 2.21639276e-02]
-     [ 2.49742009e-02]
-     [-9.27022658e-04]
-     [ 2.15802677e-02]
-     [-6.13415614e-05]
-     [ 1.54657848e-02]
-     [-1.86389755e-03]
-     [ 7.97002017e-03]
-     [ 1.93008594e-02]
-     [ 2.77679972e-02]
-     [ 3.87594998e-02]
-     [-2.57969392e-03]
-     [ 1.41417906e-02]
-     [ 5.96545124e-03]
-     [ 2.42684484e-02]
-     [ 1.59206614e-02]
-     [ 1.29592177e-02]
-     [ 8.37649591e-03]
-     [ 3.26114632e-02]
-     [ 9.80243646e-03]
-     [ 3.16398591e-03]
-     [ 1.81207098e-02]
-     [ 1.54750459e-02]
-     [ 3.86133455e-02]
-     [ 9.81370360e-03]
-     [ 2.14939862e-02]
-     [ 2.06460338e-02]
-     [ 1.90988518e-02]
-     [ 1.52023006e-02]
-     [ 1.72221307e-02]
-     [ 1.04841506e-02]
-     [ 2.02511270e-02]
-     [ 1.29943546e-02]
-     [ 1.48899816e-02]
-     [ 5.82323689e-03]
-     [ 3.79081964e-02]
-     [ 2.43230276e-02]
-     [ 2.45733391e-02]
-     [ 2.69626617e-03]
-     [ 5.21444576e-03]
-     [ 1.85980164e-02]
-     [-7.37260096e-04]
-     [ 1.57441515e-02]
-     [ 2.57489495e-02]
-     [ 1.06934113e-02]
-     [ 2.64936518e-02]
-     [ 2.40293685e-02]
-     [-9.70298424e-03]
-     [ 2.54366477e-03]
-     [ 1.83325186e-02]
-     [ 9.95635148e-03]
-     [ 1.66707020e-02]
-     [ 2.14164946e-02]
-     [ 1.44914649e-02]
-     [ 3.66368443e-02]
-     [ 1.44011164e-02]
-     [-5.22124767e-03]
-     [ 8.71434994e-03]
-     [ 2.20297445e-02]
-     [ 6.66047446e-03]
-     [ 1.83152966e-02]
-     [ 4.14542854e-02]
-     [ 4.05817963e-02]
-     [-4.54629445e-03]
-     [-2.30273395e-03]
-     [ 8.28933343e-03]
-     [ 2.20114663e-02]
-     [ 3.64675792e-03]
-     [ 1.01267546e-02]
-     [ 3.69610731e-03]
-     [ 6.22386113e-03]
-     [ 1.38416737e-02]
-     [ 1.17507521e-02]
-     [ 7.52925919e-03]
-     [ 1.85739975e-02]
-     [ 1.22331399e-02]
-     [ 2.38364451e-02]
-     [ 1.19792260e-02]
-     [ 1.64979734e-02]
-     [-8.40604212e-03]
-     [ 1.87302269e-02]
-     [ 1.20653585e-02]
-     [ 2.44735810e-03]
-     [ 7.38444086e-03]
-     [ 1.53254932e-02]
-     [ 1.10011138e-02]
-     [ 1.76009871e-02]
-     [ 3.13665085e-02]
-     [ 2.92426459e-02]
-     [-6.56296499e-03]
-     [ 2.22223029e-02]
-     [ 1.59576721e-02]
-     [ 1.07489973e-02]
-     [ 1.79725029e-02]
-     [ 2.10391991e-02]
-     [ 4.27608564e-03]
-     [ 1.20041259e-02]
-     [ 7.49390572e-03]
-     [ 1.89590566e-02]
-     [ 5.96465170e-03]
-     [ 1.41178695e-02]
-     [ 1.81329474e-02]
-     [ 1.71683496e-03]
-     [ 3.94259859e-03]
-     [ 2.68478766e-02]
-     [ 2.19906075e-03]
-     [ 1.37928128e-02]
-     [ 1.30246840e-02]
-     [ 1.55169722e-02]
-     [ 8.98492336e-03]
-     [ 7.45097827e-03]
-     [ 6.46746065e-03]
-     [ 3.32243275e-03]
-     [ 2.78243907e-02]
-     [ 1.47569571e-02]
-     [ 1.80493705e-02]
-     [ 2.63160989e-02]
-     [ 3.15987132e-02]
-     [ 3.99951730e-03]
-     [ 2.18637586e-02]
-     [ 3.10461279e-02]
-     [ 2.03194954e-02]
-     [ 2.08686665e-02]
-     [ 1.19148381e-02]
-     [ 2.80963425e-02]
-     [-1.91200562e-02]
-     [ 1.61011685e-02]
-     [ 9.94233694e-03]
-     [-6.97336718e-03]
-     [ 3.52750644e-02]
-     [ 1.53652253e-02]
-     [ 6.46577543e-03]
-     [ 3.11309472e-03]
-     [ 7.75624020e-03]
-     [ 7.05958297e-03]
-     [ 1.96377188e-02]
-     [-4.96647507e-03]
-     [ 2.47590076e-02]
-     [ 2.33729780e-02]
-     [ 1.12344110e-02]
-     [ 1.17255491e-03]
-     [ 1.54667757e-02]
-     [ 6.85148826e-03]
-     [ 1.02761379e-02]
-     [ 1.71158370e-02]
-     [ 5.91179822e-03]
-     [-1.12213995e-02]
-     [ 7.04186643e-03]
-     [ 1.36572011e-02]
-     [ 2.17243284e-02]
-     [ 1.01959445e-02]
-     [ 8.28568079e-03]
-     [ 4.06428203e-02]
-     [ 8.33368627e-04]
-     [ 9.04460438e-03]
-     [ 2.74567772e-03]
-     [ 2.56491713e-02]
-     [-7.10269529e-03]
-     [ 2.94380747e-02]
-     [-1.49235595e-03]
-     [ 1.98903438e-02]
-     [ 1.20076882e-02]
-     [ 3.57041135e-03]
-     [ 1.90565400e-02]
-     [ 2.75129848e-03]
-     [ 2.08845548e-02]
-     [ 6.85723592e-03]
-     [ 8.08920711e-03]
-     [ 3.50363031e-02]
-     [-7.75449723e-03]
-     [ 1.49742998e-02]
-     [ 6.42354600e-03]
-     [ 1.44189373e-02]
-     [ 1.33721605e-02]
-     [ 2.12493073e-02]
-     [ 1.27056846e-03]
-     [ 6.42172620e-03]
-     [ 1.46327326e-02]
-     [ 1.16719119e-02]
-     [ 2.26376411e-02]
-     [ 1.15465615e-02]
-     [ 4.85422183e-03]
-     [ 1.49909901e-02]
-     [ 2.21870244e-02]
-     [ 6.08970830e-03]
-     [ 9.58499312e-03]
-     [ 3.93354800e-03]
-     [ 1.86011866e-02]
-     [ 7.66219571e-03]
-     [ 5.58610912e-03]
-     [-2.68561207e-03]
-     [ 2.54608318e-02]
-     [ 1.61735881e-02]
-     [ 2.13673934e-02]
-     [-5.70661807e-03]
-     [ 2.24752650e-02]
-     [ 3.28950882e-02]
-     [ 2.13829875e-02]
-     [ 5.28649334e-03]
-     [ 3.08778323e-02]
-     [-6.86505809e-04]
-     [ 1.86416339e-02]
-     [ 2.97086742e-02]
-     [ 1.89464688e-02]
-     [ 3.96540239e-02]
-     [-4.74056043e-03]
-     [ 2.15829946e-02]
-     [ 5.43416850e-03]
-     [ 4.76532429e-03]
-     [ 2.34728120e-02]
-     [ 3.44561860e-02]
-     [ 1.57041345e-02]
-     [ 8.06433987e-03]
-     [-1.50195882e-03]
-     [-3.63756623e-03]
-     [ 3.26902568e-02]
-     [ 1.76561959e-02]
-     [ 1.83607321e-02]
-     [-4.63694381e-03]
-     [-1.63402408e-04]
-     [ 2.81880647e-02]
-     [ 1.58191100e-02]
-     [ 6.52643852e-03]
-     [ 1.28388554e-02]
-     [-8.00601766e-03]
-     [ 2.30312515e-02]
-     [ 1.40472660e-02]
-     [ 8.19064304e-03]
-     [ 1.57697648e-02]
-     [ 2.62266658e-02]
-     [ 5.92849962e-03]
-     [-9.59171914e-03]
-     [ 2.14466695e-02]
-     [ 2.44671553e-02]
-     [-3.60378157e-03]
-     [ 4.62118350e-03]
-     [ 1.69979092e-02]
-     [ 2.71897651e-02]
-     [ 1.71505206e-04]
-     [ 2.00978220e-02]
-     [ 1.71469338e-02]
-     [ 2.51026209e-02]
-     [ 1.19799003e-02]
-     [ 1.36276353e-02]
-     [ 1.24859186e-02]
-     [ 2.05445662e-02]
-     [ 5.34412265e-03]
-     [ 1.95444264e-02]
-     [ 1.99274011e-02]
-     [-9.05839261e-03]
-     [ 5.90206822e-03]
-     [ 9.53103788e-03]
-     [ 1.22800115e-02]
-     [ 1.94990560e-02]
-     [ 1.95417763e-03]
-     [-9.25197732e-04]
-     [ 1.54266898e-02]
-     [ 1.22732967e-02]
-     [ 1.76783698e-03]
-     [ 2.11682394e-02]
-     [ 2.09244229e-02]
-     [ 2.09727772e-02]
-     [ 2.07711011e-02]
-     [ 2.97920182e-02]
-     [-4.90178028e-03]
-     [ 1.22590875e-03]
-     [ 1.52772097e-02]
-     [ 8.34409520e-03]
-     [ 2.13817377e-02]
-     [ 9.14612971e-03]
-     [-2.69348035e-03]
-     [ 2.49119848e-03]
-     [ 1.10712526e-02]
-     [ 1.70972962e-02]
-     [ 1.31382057e-02]
-     [ 5.73088322e-03]
-     [ 5.39223244e-03]
-     [ 4.80283843e-03]
-     [ 1.14497589e-02]
-     [ 4.35466412e-03]
-     [ 1.51271783e-02]
-     [ 1.79983471e-02]
-     [ 1.32027762e-02]
-     [ 1.81133728e-02]
-     [ 3.54431220e-03]
-     [ 1.71523467e-02]
-     [ 1.37438625e-02]
-     [ 1.95770301e-02]
-     [ 2.04178430e-02]
-     [-8.28421582e-03]
-     [ 1.75739210e-02]
-     [ 1.49777252e-02]
-     [ 2.79615782e-02]
-     [ 1.65306944e-02]
-     [ 1.52998669e-02]
-     [ 3.50492150e-02]
-     [ 8.61038454e-03]
-     [ 2.71414798e-02]
-     [-1.41494740e-02]
-     [ 2.17383690e-02]
-     [ 1.16810296e-02]
-     [ 1.99180301e-02]
-     [ 9.74856969e-03]
-     [ 7.76323676e-03]
-     [-5.62860491e-03]
-     [ 2.35766619e-02]
-     [ 1.10877380e-02]
-     [ 2.62515098e-02]
-     [ 9.41154547e-03]
-     [ 5.10469638e-03]
-     [ 1.49201807e-02]
-     [-8.33019149e-03]
-     [ 4.11090851e-02]
-     [ 1.28444433e-02]
-     [-8.05335399e-03]
-     [ 1.21174688e-02]
-     [-7.25189224e-04]
-     [-8.11474631e-04]
-     [-1.70841999e-03]
-     [ 2.06549056e-02]
-     [ 1.46052521e-02]
-     [ 1.29287699e-02]
-     [ 9.47466865e-03]
-     [ 3.03502437e-02]
-     [ 2.48555280e-03]
-     [ 2.79771741e-02]
-     [ 4.44047386e-03]
-     [ 6.76597981e-03]
-     [ 1.53456721e-02]
-     [ 3.54640074e-02]
-     [ 1.14017501e-02]
-     [ 2.06441693e-02]
-     [-1.08196121e-03]
-     [-3.96744115e-04]
-     [ 2.38117240e-02]
-     [ 3.00655104e-02]
-     [ 2.30285209e-02]
-     [ 2.30339039e-02]
-     [ 1.23266866e-02]
-     [ 1.14614936e-02]
-     [ 3.62391490e-03]
-     [ 1.00023057e-02]
-     [ 9.18114837e-03]
-     [ 1.19869290e-02]
-     [ 1.01771206e-02]
-     [ 7.57521857e-03]
-     [ 1.53873153e-02]
-     [ 1.75508615e-02]
-     [ 1.85197573e-02]
-     [ 8.74914043e-03]
-     [ 1.00147882e-02]
-     [-2.60700425e-03]
-     [-1.37291127e-03]
-     [ 1.64500531e-03]
-     [ 9.22844093e-03]
-     [ 3.47479433e-02]
-     [ 1.38731403e-02]
-     [ 9.12035350e-03]
-     [ 3.10530094e-03]
-     [ 8.60616937e-03]
-     [ 1.60393249e-02]
-     [-1.69169460e-03]
-     [ 2.92867385e-02]
-     [ 1.38530359e-02]
-     [ 1.77365961e-03]
-     [ 1.03248451e-02]
-     [ 1.56486612e-02]
-     [ 1.71187762e-02]
-     [ 4.65290574e-03]
-     [ 6.28788862e-03]
-     [ 2.70905551e-02]
-     [ 1.71075836e-02]
-     [ 1.59389321e-02]
-     [ 1.93985552e-02]
-     [ 5.21449745e-03]
-     [ 1.41587537e-02]
-     [ 2.06623059e-02]
-     [ 2.43461244e-02]
-     [ 2.00686045e-02]
-     [ 1.88296195e-02]
-     [ 1.20787267e-02]
-     [ 1.39980372e-02]
-     [ 1.86580010e-02]
-     [-7.12762866e-03]
-     [ 2.02881470e-02]
-     [ 6.30721822e-03]
-     [-3.71562876e-03]
-     [ 4.33146488e-04]
-     [ 2.60886108e-03]
-     [ 1.70918517e-02]
-     [ 2.40373667e-02]
-     [ 1.11663193e-02]
-     [ 1.24355778e-02]
-     [ 2.67521571e-03]
-     [ 1.51986359e-02]
-     [ 3.53893451e-02]
-     [ 1.98195614e-02]
-     [ 1.49321575e-02]
-     [ 9.10710264e-03]
-     [ 1.40137887e-02]
-     [ 1.43299606e-02]
-     [ 2.86609177e-02]
-     [ 8.02192930e-03]
-     [ 7.72645511e-03]
-     [ 2.71271337e-02]
-     [ 2.73720939e-02]
-     [ 1.12827616e-02]
-     [ 2.32069679e-02]
-     [ 2.54733190e-02]
-     [ 1.61793269e-02]
-     [ 1.20623410e-02]
-     [ 3.74235213e-03]
-     [ 9.16969217e-03]
-     [ 4.36562859e-03]
-     [ 3.33405063e-02]
-     [ 2.65779365e-02]
-     [ 1.28222071e-02]
-     [ 4.05134633e-05]
-     [ 1.80342644e-02]
-     [ 1.23378960e-02]
-     [ 1.56940743e-02]
-     [ 1.02478024e-02]
-     [ 2.42737145e-03]
-     [ 4.12954018e-03]
-     [ 3.06371339e-02]
-     [ 3.85168265e-03]
-     [ 2.43206006e-02]
-     [ 1.89183280e-02]
-     [ 8.63162428e-03]
-     [ 4.96937055e-03]
-     [-6.45422470e-03]
-     [ 9.03696474e-03]
-     [ 1.77851431e-02]
-     [-3.28481011e-03]
-     [ 1.80617394e-03]
-     [ 3.72603759e-02]
-     [ 7.15163164e-03]
-     [ 1.42561579e-02]
-     [ 1.01243444e-02]
-     [ 1.03539880e-02]
-     [ 2.37625092e-02]
-     [ 9.78658348e-03]
-     [ 2.03225985e-02]
-     [ 2.79377727e-03]
-     [ 1.99084543e-02]
-     [ 7.73637835e-03]
-     [ 2.58390754e-02]
-     [ 1.34466020e-02]
-     [ 4.20908444e-03]
-     [ 2.20788419e-02]
-     [ 6.73523033e-03]
-     [-4.04809602e-03]
-     [ 2.37381943e-02]
-     [ 2.79076174e-02]
-     [ 9.97885689e-03]
-     [-1.39096174e-02]
-     [-8.46114289e-03]
-     [ 7.65322056e-03]
-     [ 2.93334089e-02]
-     [ 1.89145319e-02]
-     [-3.92397167e-03]
-     [ 1.87226909e-03]
-     [ 8.16712156e-04]
-     [ 1.50475996e-02]
-     [ 1.89720728e-02]
-     [ 1.50791546e-02]
-     [ 5.15442761e-03]
-     [ 8.97469278e-03]
-     [ 3.66096422e-02]
-     [ 2.68969536e-02]
-     [ 9.60852671e-03]
-     [ 1.20267086e-03]
-     [ 1.84594654e-02]
-     [ 5.18809911e-03]
-     [ 1.16589703e-02]
-     [ 1.41888103e-02]
-     [ 1.48958191e-02]
-     [ 1.44316861e-02]
-     [ 5.14906505e-03]
-     [ 1.78901125e-02]
-     [ 1.19235236e-02]
-     [ 2.80999951e-02]
-     [ 1.18562300e-02]
-     [ 3.56240571e-02]
-     [ 8.83135758e-03]
-     [ 1.33388769e-03]
-     [ 2.09638029e-02]
-     [ 1.52334198e-02]
-     [ 1.28699895e-02]
-     [ 1.98742114e-02]
-     [ 2.04123966e-02]
-     [ 1.06636826e-02]
-     [-9.31748655e-05]
-     [ 1.25091448e-02]
-     [ 1.44821396e-02]
-     [ 3.30482274e-02]
-     [-2.26354809e-04]
-     [ 1.91925280e-02]
-     [ 1.15124211e-02]
-     [ 2.99098808e-02]
-     [ 2.92039290e-02]
-     [ 1.80231966e-03]
-     [ 2.63870135e-03]
-     [ 7.43902754e-04]
-     [ 2.47281753e-02]
-     [ 1.26161296e-02]
-     [ 2.44738720e-03]
-     [ 9.69952531e-03]
-     [ 2.16825791e-02]
-     [ 1.43986940e-02]
-     [ 1.34631991e-03]
-     [ 2.76090950e-02]
-     [ 1.37828719e-02]
-     [ 3.05978954e-02]
-     [ 2.54623424e-02]
-     [-3.83802783e-03]
-     [-9.82504152e-03]
-     [ 1.10120997e-02]
-     [ 6.74659386e-04]
-     [ 7.17681414e-03]
-     [ 1.20444354e-02]
-     [ 1.55207627e-02]
-     [ 1.48392925e-02]
-     [ 3.00704651e-02]
-     [ 1.35321729e-02]
-     [ 1.91898588e-02]
-     [ 3.31023112e-02]
-     [ 1.40018519e-02]
-     [ 2.07327772e-02]
-     [-3.79994558e-03]
-     [ 1.51773393e-02]
-     [ 7.97268189e-03]
-     [ 1.27518605e-02]
-     [ 1.02353627e-02]
-     [ 2.23254822e-02]
-     [ 9.79550276e-03]
-     [ 1.56035926e-03]
-     [ 1.16926245e-02]
-     [ 1.95395797e-02]
-     [ 2.29741670e-02]
-     [ 1.75402742e-02]
-     [ 1.80674754e-02]
-     [ 2.75804214e-02]
-     [ 1.51201179e-02]
-     [ 9.07049142e-03]
-     [ 7.92588666e-03]
-     [ 1.93045698e-02]
-     [ 5.35813626e-03]
-     [ 7.96838384e-03]
-     [ 2.46003997e-02]
-     [ 2.17260309e-02]
-     [-1.04730446e-02]
-     [ 2.31131259e-02]
-     [ 2.10693553e-02]
-     [ 1.44022293e-02]
-     [ 1.45122074e-02]
-     [ 3.40550160e-03]
-     [ 2.12971065e-02]
-     [ 7.93288928e-04]
-     [-2.53274664e-03]
-     [ 1.80066116e-02]
-     [ 5.76966722e-03]
-     [ 1.14549231e-03]
-     [ 1.38959335e-03]
-     [ 1.67741366e-02]
-     [ 8.83013941e-03]
-     [ 7.99330138e-03]
-     [ 4.78845276e-03]
-     [ 1.68256070e-02]
-     [ 1.77039262e-02]
-     [ 2.16051117e-02]
-     [ 2.49989890e-02]
-     [-3.56718898e-03]
-     [ 3.47927175e-02]
-     [ 2.45824782e-03]
-     [ 2.87288446e-02]
-     [ 2.02017911e-02]
-     [ 1.50871873e-02]
-     [-6.11757580e-03]
-     [ 2.70721652e-02]
-     [ 2.43971869e-02]
-     [ 1.12132784e-02]
-     [ 6.16904255e-03]
-     [ 1.14217456e-02]
-     [ 1.07891746e-02]
-     [ 1.86756905e-02]
-     [ 8.31735693e-03]
-     [ 7.68517796e-03]
-     [-2.40639108e-03]
-     [ 5.85925207e-03]
-     [ 1.65462345e-02]
-     [ 1.33519564e-02]
-     [ 2.62536388e-02]
-     [ 6.12522755e-03]
-     [ 1.01807714e-02]
-     [ 2.44196840e-02]
-     [ 1.66740641e-02]
-     [ 4.54770774e-02]
-     [ 9.33551509e-03]
-     [ 8.89999792e-03]
-     [ 1.33753186e-02]
-     [ 8.65266472e-03]
-     [ 1.62893608e-02]
-     [ 3.11688241e-02]
+     [...]
      [ 2.03373376e-02]
      [-2.26563914e-03]
      [ 8.92654806e-03]]
 
 
 
-    
-![png](output_7_2.png)
-    
+
+![png](../figs/output_7_2.png)
 
 
 
-    
-![png](output_7_3.png)
-    
 
+
+![png](../figs/output_7_3.png)
 
 
 ```python
@@ -7482,7 +5467,7 @@ print(YPredLabel)
 Ylabel = np.array([ones([1000]), zeros([1000])])
 Ylabel.resize(2000,1)
 print(Ylabel)
-# confusion matri
+# confusion matrix
 Accuracy= confusion_matrix(Ylabel, YPredLabel)
 precision = precision_score(Ylabel, YPredLabel, average='binary')
 recall = recall_score(Ylabel, YPredLabel, average='binary')
@@ -7490,7 +5475,7 @@ score = f1_score(Ylabel, YPredLabel, average='binary')
 print(precision)
 print(recall)
 print(score)
-print(accuracy_score(Ylabel, YPredLabel)) 
+print(accuracy_score(Ylabel, YPredLabel))
 print(Accuracy)
 fpr, tpr, threshold = roc_curve(Ylabel, YPredLabel)
 roc_auc = auc(fpr, tpr)
@@ -7528,18 +5513,9 @@ plt.legend()
      [  47  953]]
 
 
-
-
-
     <matplotlib.legend.Legend at 0x7f0e223b4ed0>
 
-
-
-
-    
-![png](output_8_2.png)
-    
-
+![png](../figs/output_8_2.png)
 
 
 ```python
@@ -7551,7 +5527,7 @@ print(YPredLabel)
 Ylabel = np.array([ones([1000]), zeros([1000])])
 Ylabel.resize(2000,1)
 print(Ylabel)
-# confusion matri
+# confusion matrix
 Accuracy= confusion_matrix(Ylabel, YPredLabel)
 precision = precision_score(Ylabel, YPredLabel, average='binary')
 recall = recall_score(Ylabel, YPredLabel, average='binary')
@@ -7560,7 +5536,7 @@ print(precision)
 print(recall)
 print(score)
 print(Accuracy)
-print(accuracy_score(Ylabel, YPredLabel)) 
+print(accuracy_score(Ylabel, YPredLabel))
 fpr, tpr, threshold = roc_curve(Ylabel, YPredLabel)
 roc_auc = auc(fpr, tpr)
 plt.figure(figsize=(10, 5))
@@ -7597,18 +5573,10 @@ plt.legend()
     0.949
 
 
-
-
-
     <matplotlib.legend.Legend at 0x7f0e22244ed0>
 
 
-
-
-    
-![png](output_9_2.png)
-    
-
+![png](../figs/output_9_2.png)
 
 
 ```python
@@ -7620,7 +5588,7 @@ print(YPredLabel)
 Ylabel = np.array([ones([1000]), zeros([1000])])
 Ylabel.resize(2000,1)
 print(Ylabel)
-# confusion matri
+# confusion matrix
 Accuracy= confusion_matrix(Ylabel, YPredLabel)
 precision = precision_score(Ylabel, YPredLabel, average='binary')
 recall = recall_score(Ylabel, YPredLabel, average='binary')
@@ -7668,18 +5636,10 @@ plt.legend()
      [ 160  840]]
 
 
-
-
-
     <matplotlib.legend.Legend at 0x7f0e221f4250>
 
 
-
-
-    
-![png](output_10_2.png)
-    
-
+![png](..(/figs/output_10_2.png)
 
 
 ```python
@@ -7691,7 +5651,7 @@ print(YPredLabel)
 Ylabel = np.array([ones([1000]), zeros([1000])])
 Ylabel.resize(2000,1)
 print(Ylabel)
-# confusion matri
+# confusion matrix
 Accuracy= confusion_matrix(Ylabel, YPredLabel)
 precision = precision_score(Ylabel, YPredLabel, average='binary')
 recall = recall_score(Ylabel, YPredLabel, average='binary')
@@ -7740,17 +5700,11 @@ plt.legend()
 
 
 
-
-
     <matplotlib.legend.Legend at 0x7f0e22194dd0>
 
 
 
-
-    
-![png](output_11_2.png)
-    
-
+![png](../figs/output_11_2.png)
 
 
 ```python
@@ -7762,7 +5716,7 @@ print(YPredLabel)
 Ylabel = np.array([ones([1000]), zeros([1000])])
 Ylabel.resize(2000,1)
 print(Ylabel)
-# confusion matri
+# confusion matrix
 Accuracy= confusion_matrix(Ylabel, YPredLabel)
 precision = precision_score(Ylabel, YPredLabel, average='binary')
 recall = recall_score(Ylabel, YPredLabel, average='binary')
@@ -7810,18 +5764,10 @@ plt.legend()
     None
 
 
-
-
-
     <matplotlib.legend.Legend at 0x7f0e220e2790>
 
 
-
-
-    
-![png](output_12_2.png)
-    
-
+![png](../figs/output_12_2.png)
 
 
 ```python
@@ -7853,7 +5799,7 @@ def prediction(Data,Discriminator):
     if Y_pred[i] < threshold:
        label.append(0)
     elif Y_pred[i] >= threshold:
-       label.append(1) 
+       label.append(1)
   #print(Y_pred)
   #print(label)
   return Y_pred
