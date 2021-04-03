@@ -30,7 +30,7 @@ feasibility of our approach.
 
 ## Keywords
 
-Massive MIMO, Pilot contamination attack, Gen- erative Adversarial Network,
+Massive MIMO, Pilot contamination attack, Generative Adversarial Network,
 Network security.
 
 ## Matlab Simulations
