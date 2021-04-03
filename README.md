@@ -44,7 +44,8 @@ and *DropOut* operations. The last layer is composed of *Flatten* and
 function, which returns a binary output (e.g., *true* or *false*).
 
 
-
+![png](./figs/GANfigure.png)
+### Figure 1. Architecture of our proposed GAN.
 
 The generator is designed as an estimator, with encoding and decoding
 blocks, to estimate the channel from the noisy received signals ($Y$)
