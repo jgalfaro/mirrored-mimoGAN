@@ -33,6 +33,32 @@ feasibility of our approach.
 Massive MIMO, Pilot contamination attack, Generative Adversarial Network,
 Network security.
 
+
+## Architecture of our proposed GAN
+
+Figure 1 shows the architecture of our proposed GAN. The discriminator
+contains four layers. The three first layers consist of convolutional
+(*Con2D*) operations, followed by *BatchNormalization*, *LeakyRelu*,
+and *DropOut* operations. The last layer is composed of *Flatten* and
+*Dense* operations, followed by a *Sigmoid* linear activation
+function, which returns a binary output (e.g., *true* or *false*).
+
+
+
+
+The generator is designed as an estimator, with encoding and decoding
+blocks, to estimate the channel from the noisy received signals ($Y$)
+at the BS. I.e., it acts as an autoencoder estimating real channel
+matrices from the noisy signals. The generator is composed of four
+encoding blocks and four decoding blocks. Each encoding block consists
+of layers with convolutional (*Con2D*) operations, followed by
+*BatchNormalization* and *Relu* operations. The output of the last
+encoding block is sent to the first decoding block. Each decoding
+block is composed of transpose convolutional (*Con2DTranspose*)
+operations, followed by *BatchNormalization* and *Relu* operations.
+The last layer of the last decoder uses a *tanh* activation function,
+to scale the output values in the range -1 and 1.
+
 ## Matlab Simulations
 
 We simulate a single-cell network in Matlab with the characteristics
