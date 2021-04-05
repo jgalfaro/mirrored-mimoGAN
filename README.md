@@ -77,9 +77,12 @@ channel matrices. The Matlab code associated to this part is available
 <a
 href="https://github.com/jgalfaro/mirrored-mimoGAN/tree/main/matlab">here</a>.
 
-<img src="./figs/table1.png" width="65%"  />
 
 #### Table 1. Simulation parameters in Matlab
+
+<img src="./figs/table1.png" width="65%"  />
+
+
 
 
 
