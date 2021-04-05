@@ -94,7 +94,8 @@ save('Test_Channel.mat','Test_Channel');
 
 ```
 
-=== functionRlocalscattering.m
+functionRlocalscattering
+===
 
 ```Matlab
 %==========================================================================
