@@ -40,7 +40,7 @@ Figure 1 shows the architecture of our proposed GAN. The discriminator
 contains four layers. The three first layers consist of convolutional
 (*Con2D*) operations, followed by *BatchNormalization*, *LeakyRelu*,
 and *DropOut* operations. The last layer is composed of *Flatten* and
-*Dense* operations, followed by a *Sigmoid* linear activation
+*Dense* operations, followed by a *MSE* linear activation
 function, which returns a binary output (e.g., *true* or *false*).
 
 
@@ -81,9 +81,6 @@ href="https://github.com/jgalfaro/mirrored-mimoGAN/tree/main/matlab">here</a>.
 #### Table 1. Simulation parameters in Matlab
 
 <img src="./figs/table1.png" width="65%"  />
-
-
-
 
 
 ## Python Simulations
