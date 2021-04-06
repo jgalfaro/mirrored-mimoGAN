@@ -80,7 +80,7 @@ href="https://github.com/jgalfaro/mirrored-mimoGAN/tree/main/matlab">here</a>.
 
 #### Table 1. Simulation parameters in Matlab
 
-<img src="./figs/table1.png" width="65%"  />
+<img src="./figs/table1.png" width="45%"  />
 
 
 ## Python Simulations
