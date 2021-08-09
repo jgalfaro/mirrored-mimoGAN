@@ -1,5 +1,4 @@
-Supplementary Material for Pilot Contamination Attack Detection in Massive
-MIMO Using Generative Adversarial Networks
+Pilot Contamination Attack Detection in Massive MIMO Using Generative Adversarial Networks
 ===
 
 ### Fatemeh Banaeizadeh, Carleton University, School of Computer Science, Canada.
@@ -14,6 +13,7 @@ MIMO Using Generative Adversarial Networks
 
 ## Abstract
 
+Supplementary Material to Ref. [1].
 Reliable and high throughput communication in Massive Multiple-Input
 Multiple-Output (MIMO) systems strongly depends on accurate channel
 estimation at the Base Station (BS). However, the channel estimation
@@ -90,3 +90,23 @@ the trained networks and their weighs are saved to be evaluated in a
 testing phase, with both normal and abnormal datasets (each of size
 1000). The Python code associated to this part is available <a
 href="https://github.com/jgalfaro/mirrored-mimoGAN/tree/main/python">here</a>.
+
+## References
+
+If using this code for research purposes, please cite:
+
+[1] M. Barbeau, J. Garcia-Alfaro, E. Kranakis. "Pilot Contamination Attack Detection in 5G Massive MIMOSystems Using Generative Adversarial Networks", IEEE International Mediterranean Conference on Communications and Networking (MeditCom), 2021. 
+
+```
+@inproceedings{barbeau2021ccece2021,
+  title={{Pilot Contamination Attack Detection in 5G Massive MIMOSystems Using Generative Adversarial Networks}},
+  author={Banaeizadeh, Fatemeh and Barbeau, Michel and Garcia-Alfaro, Joaquin and Kranakis, Evangelos and Wan, Tao},
+  booktitle={IEEE International Mediterranean Conference on Communications and Networking (MeditCom)},
+  pages={},
+  year={2021},
+  month={ },
+  publisher={IEEE},
+  doi = {},
+  url = {},
+}
+```
