@@ -95,7 +95,7 @@ href="https://github.com/jgalfaro/mirrored-mimoGAN/tree/main/python">here</a>.
 
 If using this code for research purposes, please cite:
 
-[1] M. Barbeau, J. Garcia-Alfaro, E. Kranakis. "Pilot Contamination Attack Detection in 5G Massive MIMOSystems Using Generative Adversarial Networks", IEEE International Mediterranean Conference on Communications and Networking (MeditCom), 2021. 
+[1] F. Banaeizadeh, M. Barbeau, J. Garcia-Alfaro, E. Kranakis, T. Wan. "Pilot Contamination Attack Detection in 5G Massive MIMOSystems Using Generative Adversarial Networks", IEEE International Mediterranean Conference on Communications and Networking (MeditCom), 2021. 
 
 ```
 @inproceedings{barbeau2021ccece2021,
